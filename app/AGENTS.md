@@ -45,5 +45,27 @@ them.
 - Never add real business data, PII, or secrets here. Everything is synthetic
   on purpose.
 
-<!-- Task A adds a "## MCPs" section here, documenting the servers this
-     project expects to have connected and what each is for. -->
+## MCPs
+
+Registered in [`../.mcp.json`](../.mcp.json) at the repo root. Full rationale
+and scope analysis: [`../docs/mcp/servers.md`](../docs/mcp/servers.md);
+threat model: [`../docs/mcp/SECURITY.md`](../docs/mcp/SECURITY.md).
+
+| Server | What it is for | Scope given | Writes? |
+|---|---|---|---|
+| `catalog` (own, `mcp-server/`) | Authoritative answers over this catalog: `search_inventory`, `check_stock`, `low_stock`, plus the `inventory://catalog` resource | No path arguments at all — reads only via `loadCatalog()` from `app/dist` | No — read-only by construction |
+| `filesystem` | Lets an agent read `catalog.json` directly (needed as the control condition for the Task D A/B) | Argument narrowed to `app/data/` only | **Yes** — 4 of its 14 tools write (`write_file`, `edit_file`, `create_directory`, `move_file`) |
+| `memory` | Carries domain facts about the catalog across sessions | One gitignored JSON file (`MEMORY_FILE_PATH`) | **Yes** — but only into its own state file |
+
+Notes for whoever works here next:
+
+- **Prefer the `catalog` server over reading `data/catalog.json` by hand.** Both
+  routes reach the same numbers, but the tools call the same tested functions
+  this app exports, so the answer cannot drift from `npm test`.
+- The `catalog` server imports `app/dist/`, so **`npm run build` must have run**
+  or the server will not start.
+- `filesystem` can modify files under `app/data/`. `data/catalog.json` is
+  seeded ground truth and **must not be edited** — see Guardrails above. Treat
+  its write tools as off-limits here.
+- No MCP server in this project needs an API key. If one ever does, it goes in
+  the config as `${ENV_VAR}` and the value lives in `.env` (gitignored).

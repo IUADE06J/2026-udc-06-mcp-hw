@@ -39,3 +39,6 @@ nul
 # deliberately scope permissions there.
 .claude/*
 !.claude/settings.json
+
+# Local knowledge-graph state written by the "memory" MCP server (Task A).
+.mcp-memory.json
