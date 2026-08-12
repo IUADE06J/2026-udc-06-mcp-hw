@@ -1,0 +1,221 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit config — auto-review of UDC Workshop 6 homework PRs.
+# Workshop: "MCP (Model Context Protocol)".
+# Place this file in the ROOT of the practice repo.
+
+language: "uk-UA"
+tone_instructions: >
+  Ментор воркшопу UDC. Відповідай українською, доброзичливо але вимогливо.
+  Що пропущено — поясни що і чому. Статуси: ✅ зроблено, ⚠️ частково, ❌ пропущено.
+
+early_access: false
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: false
+
+  auto_review:
+    enabled: true
+    drafts: true
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
+    base_branches:
+      - ".*"
+    ignore_title_keywords:
+      - "WIP"
+      - "[skip review]"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+
+  # ── File filters ──────────────────────────────────────────────
+  path_filters:
+    - ".mcp.json"
+    - ".cursor/**"
+    - ".vscode/mcp.json"
+    - "mcp-server/**"
+    - "docs/**"
+    - "materials/**"
+    - "app/AGENTS.md"
+    - "AGENTS.md"
+    - "CLAUDE.md"
+    - "app/src/**"
+    - "app/data/**"
+    - ".env.example"
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/coverage/**"
+    - "!*.lock"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/*.min.js"
+
+  # ── Path-specific review instructions ─────────────────────────
+  path_instructions:
+    - path: ".mcp.json"
+      instructions: |
+        Task A — конфіг MCP-серверів. Перевір: підключено щонайменше 2 сервери;
+        секрети НЕ вписані literal-значенням, а через ${ENV_VAR}; якщо є
+        filesystem-сервер — область доступу звужена (шлях до репо чи підкаталог),
+        а не домашня тека, «/» чи диск цілком. Занадто широкий scope — ⚠️.
+        Плаваючий тег версії варто відзначити як зауваження, не як помилку.
+
+    - path: ".cursor/**"
+      instructions: |
+        Task A — альтернативне місце конфігу MCP (Cursor). Ті самі перевірки, що
+        і для .mcp.json: ≥2 сервери, секрети через ${ENV_VAR}, вузький scope.
+
+    - path: "mcp-server/**"
+      instructions: |
+        Task B — власний MCP-сервер. Перевір СТАТИЧНО: є щонайменше 2 tools і
+        щонайменше 1 resource; кожен tool має опис і схему вхідних параметрів;
+        сервер ІМПОРТУЄ доменні функції з app (searchProducts/findBySku/lowStock/
+        inventoryValue), а не дублює їхню логіку заново; сервер read-only — не
+        має бути tools, які пишуть у файли, видаляють дані чи ходять у мережу;
+        немає захардкоджених секретів. НЕ намагайся запускати сервер.
+
+    - path: "docs/mcp/servers.md"
+      instructions: |
+        Task A (документація) — перевір, що описано КОЖЕН підключений сервер:
+        навіщо, транспорт, як запускається, яка область доступу і чому саме
+        така, чи є секрети і як вони передаються. Порожні плейсхолдери <…> — ⚠️.
+
+    - path: "docs/mcp/SECURITY.md"
+      instructions: |
+        Task C — threat model. Перевір, що це опис САМЕ ЦІЄЇ конфігурації, а не
+        загальні поради з інтернету: таблиця «хто до чого має доступ» заповнена
+        реальними назвами серверів учасника; ризики прив'язані до конкретних
+        підключених серверів; перелічені реально застосовані мітигації (звужений
+        scope, read-only tools, ${ENV_VAR}, зафіксована версія). Загальний текст
+        без прив'язки до власного конфігу — ⚠️.
+
+    - path: "docs/ab-validation.md"
+      instructions: |
+        Task D — A/B. Перевір: той самий промпт з materials/ab-question.md у
+        обох прогонах; описано, ЯК саме вимикали сервер; є що зробив агент у A
+        і в B, таблиця відмінностей і висновок. Чесний нульовий результат
+        (агент і без MCP прочитав JSON і порахував правильно) — це ВАЛІДНИЙ
+        результат, не помилка, якщо він чесно описаний і пояснений. Плейсхолдери
+        <…> — ⚠️.
+
+    - path: "docs/task-e-bonus.md"
+      instructions: |
+        Task E (bonus) — один із трьох шляхів (крос-хост, MCP Inspector, сервер
+        із токеном). Перевір, що ОДИН шлях заповнений повністю з конкретикою.
+        Необов'язкове; відсутність файлу — не помилка.
+
+    - path: "app/AGENTS.md"
+      instructions: |
+        Task A (частина) — перевір, що з'явилась секція «## MCPs» з переліком
+        підключених серверів і коротким призначенням кожного. Решта файлу
+        (Stack/Commands/Architecture/Conventions/Guardrails) вже була в
+        стартовому репо — не мала суттєво змінитись.
+
+    - path: "app/src/**"
+      instructions: |
+        Засіяний доменний код. Він НЕ мав змінюватись: сигнатури
+        searchProducts/findBySku/lowStock/categories/inventoryValue —
+        захищений публічний API, від якого залежить mcp-server. Якщо їх
+        змінено — познач це як ⚠️ і поясни, що це ламає Task B і Task D.
+
+    - path: "app/data/**"
+      instructions: |
+        Засіяні дані каталогу. Файл catalog.json НЕ мав редагуватись — він є
+        ground truth для A/B у Task D. Будь-яка зміна чисел робить A/B
+        непорівнянним; познач як ⚠️.
+
+  # ── Pre-merge checks (grading) ────────────────────────────────
+  pre_merge_checks:
+    title:
+      mode: "warning"
+      requirements: >
+        PR title should follow: "WS6: <participant-name>".
+
+    description:
+      mode: "warning"
+
+    # Docstring coverage is irrelevant for this homework (config + docs +
+    # a small server) — without this it fires a noisy default warning.
+    docstrings:
+      mode: "off"
+
+    custom_checks:
+      - mode: "warning"
+        name: "Task A — public MCP servers connected & scoped"
+        instructions: >
+          Static review only — do NOT attempt to execute or connect anything.
+          Check a committed MCP config (.mcp.json, .cursor/mcp.json or
+          .vscode/mcp.json) registers at least 2 servers, that no secret is
+          written as a literal value (must be ${ENV_VAR}), and that any
+          filesystem server is scoped to the repo or a subdirectory rather than
+          a home directory or drive root. Also check docs/mcp/servers.md
+          documents each server and app/AGENTS.md gained a "## MCPs" section.
+          PASS if all present and scoping is narrow; FAIL if missing or a
+          literal secret appears.
+
+      - mode: "warning"
+        name: "Task B — custom MCP server with 2+ tools and 1+ resource"
+        instructions: >
+          Static review only — do NOT attempt to run the server or install
+          dependencies (the review sandbox has none). Check mcp-server/ exists
+          and its source registers at least 2 tools (each with a description and
+          an input schema) and at least 1 resource. Check it imports the domain
+          functions from the app package instead of reimplementing catalog logic,
+          and that it is read-only (no file writes, no deletes, no network
+          calls). PASS if all of that holds; FAIL if the server is missing, has
+          fewer than 2 tools or no resource, or duplicates the domain logic.
+
+      - mode: "warning"
+        name: "Task C — threat model is specific to this setup"
+        instructions: >
+          Static review only. Check docs/mcp/SECURITY.md describes the
+          participant's OWN configuration: the access table names the servers
+          they actually connected, risks are tied to those specific servers, and
+          the mitigations listed are ones actually applied in this repo (narrow
+          scope, read-only tools, ${ENV_VAR} secrets, pinned versions). PASS if
+          it is concrete and self-referential; FAIL if it is generic security
+          advice that would read identically for any project, or left as the
+          unfilled template.
+
+      - mode: "warning"
+        name: "Task D — A/B validation with the fixed prompt"
+        instructions: >
+          Static review only — do NOT attempt to execute the app or the test
+          suite. Check docs/ab-validation.md records the same prompt from
+          materials/ab-question.md run with the MCP server connected and
+          disconnected, states how the server was disabled, and gives both
+          outcomes plus a difference table and a conclusion. An honest null
+          result (the agent answered correctly without MCP too) is a VALID
+          outcome and must PASS if it is explained. FAIL only for unfilled
+          placeholders, a missing run, or a changed prompt between runs.
+
+      - mode: "warning"
+        name: "Task E — bonus (cross-host, Inspector, or token server)"
+        instructions: >
+          Optional. If docs/task-e-bonus.md exists, check exactly ONE of the
+          three paths is completed fully with concrete detail and a conclusion,
+          rather than all three left half-empty. Absence of the file is NOT a
+          failure.
+
+      - mode: "warning"
+        name: "No secrets committed"
+        instructions: >
+          Static review only. Scan the diff for committed credentials: values
+          matching GitHub tokens (ghp_, github_pat_), OpenAI-style keys (sk-),
+          bearer tokens, or any .env file added to the repo. MCP configs must
+          reference secrets as ${ENV_VAR}. PASS if no literal credential and no
+          .env file appears in the diff; FAIL immediately if one does, and say
+          plainly which file and that the credential should be rotated.
+
+chat:
+  auto_reply: true
