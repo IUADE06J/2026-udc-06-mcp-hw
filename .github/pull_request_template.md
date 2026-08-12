@@ -8,7 +8,7 @@
 - [ ] **Task D:** `docs/ab-validation.md` — той самий промпт з MCP і без, реальна різниця
 - [ ] **Task E (bonus):** `docs/task-e-bonus.md` — один шлях
 - [ ] `cd app && npm test` зелений
-- [ ] `git grep -nE "ghp_|github_pat_|sk-"` → нічого; `.env` не в комітах
+- [ ] `git grep -nE "ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}"` → нічого; `.env` не в комітах
 
 ## Хост(и) і модель
 

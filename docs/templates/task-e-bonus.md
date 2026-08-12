@@ -53,7 +53,7 @@
 **Доказ, що секрет не в репозиторії:**
 
 ```bash
-git grep -nE "ghp_|github_pat_" || echo "clean"
+git grep -nE "ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}" || echo "clean"
 ```
 
 <вставте вивід — має бути `clean`>
