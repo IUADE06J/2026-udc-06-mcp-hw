@@ -23,6 +23,7 @@ coverage
 *.local
 .vscode/*
 !.vscode/extensions.json
+!.vscode/mcp.json
 .idea
 
 # Logs

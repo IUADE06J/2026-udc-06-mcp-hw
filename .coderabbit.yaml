@@ -164,7 +164,7 @@ reviews:
           literal secret appears.
 
       - mode: "warning"
-        name: "Task B — custom MCP server with 2+ tools and 1+ resource"
+        name: "Task B — server: 2+ tools, 1+ resource"
         instructions: >
           Static review only — do NOT attempt to run the server or install
           dependencies (the review sandbox has none). Check mcp-server/ exists
@@ -200,7 +200,7 @@ reviews:
           placeholders, a missing run, or a changed prompt between runs.
 
       - mode: "warning"
-        name: "Task E — bonus (cross-host, Inspector, or token server)"
+        name: "Task E — bonus (one path)"
         instructions: >
           Optional. If docs/task-e-bonus.md exists, check exactly ONE of the
           three paths is completed fully with concrete detail and a conclusion,

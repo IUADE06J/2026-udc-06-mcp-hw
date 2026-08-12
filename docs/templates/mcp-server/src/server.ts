@@ -24,7 +24,7 @@ import {
   lowStock,
   inventoryValue,
   categories,
-} from "../app/dist/index.js";
+} from "../../app/dist/index.js";
 
 const server = new McpServer({
   name: "catalog-server",
