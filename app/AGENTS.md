@@ -45,5 +45,10 @@ them.
 - Never add real business data, PII, or secrets here. Everything is synthetic
   on purpose.
 
-<!-- Task A adds a "## MCPs" section here, documenting the servers this
-     project expects to have connected and what each is for. -->
+## MCPs
+
+Configured in `.cursor/mcp.json`. Full scope notes: `docs/mcp/servers.md`.
+
+- **filesystem** (`@modelcontextprotocol/server-filesystem`) — read the seeded catalog in `app/data/` (`catalog.json`) without exposing the rest of the repo, home directory, or drive. Allowed path is `${workspaceFolder}/app/data` only.
+- **memory** (`@modelcontextprotocol/server-memory`) — local knowledge graph across chats (facts about SKUs, low stock, A/B notes). No network, no token. Does not replace catalog tools.
+- **catalog** (`mcp-server/`) — read-only tools `search_inventory`, `check_stock`, `low_stock` plus resource `inventory://catalog`. Wraps `app/` domain functions; do not reimplement those rules.
