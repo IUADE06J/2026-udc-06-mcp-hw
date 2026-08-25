@@ -1,6 +1,6 @@
 # A/B-валідація MCP (Task D)
 
-**Промпт (однаковий для A і B):**
+**Промпт (однаковий для A і B):** дослівно з `materials/ab-question.md`, між прогонами **не змінювався** (вимога Task D — identical prompt).
 
 ```
 Which products in our catalog need reordering right now, and what is the
