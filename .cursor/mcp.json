@@ -6,7 +6,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "${workspaceFolder}"
+        "${workspaceFolder}/app/data"
       ]
     },
     "memory": {
@@ -15,6 +15,13 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "catalog": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/mcp-server/dist/server.js"
       ]
     }
   }
