@@ -90,6 +90,31 @@
 
 ---
 
+## Сервер 3 — catalog
+
+Власний сервер Task B (`mcp-server/`), той самий файл конфігу, що й публічні.
+
+| | |
+|---|---|
+| **Навіщо** | Read-only доступ до каталогу через доменні функції `app/` (`searchProducts`, `findBySku`, `lowStock`, `categories`, `inventoryValue`), без переписування логіки в MCP-шарі. |
+| **Транспорт** | stdio |
+| **Як запускається** | `node ${workspaceFolder}/mcp-server/dist/server.js` |
+| **Область доступу (scope)** | Визначає `loadCatalog()` у `app/` — читає лише `app/data/catalog.json` (шлях від файлу лоадера, не cwd). Мережі, інших каталогів і запису немає. |
+| **Секрети** | немає |
+| **Версія** | локальний білд `catalog-server` `1.0.0` (`mcp-server/dist/server.js`), не `npx`. Перед запуском потрібні `cd app && npm run build` і `cd mcp-server && npm run build`. |
+
+**Які tools він дав агенту:** у Cursor (namespace `project-0-2026-udc-06-mcp-hw-catalog`):
+
+- `search_inventory`
+- `check_stock`
+- `low_stock`
+
+Resource: `inventory://catalog`. Усі — лише читання (немає write/delete/network tools).
+
+**Перевірка, що працює:** хост викликав `check_stock` (`SS-1102`), `low_stock` (9 SKU) і читав `inventory://catalog` (`inventoryValue` 46152).
+
+---
+
 ## Що НЕ підключали і чому
 
 - **git** (`uvx`) і **fetch** (`uvx`) — з таблиці walkthrough. Потрібні Python + `uv`; ставити їх заради двох зайвих серверів не варто. Fetch ще й тягне довільний зовнішній контент (ризик prompt injection) — для синтетичного каталогу це зайва поверхня атаки.
